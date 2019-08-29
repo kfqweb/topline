@@ -8,3 +8,12 @@ body {
   height: 100%;
   overflow: hidden;
 }
+
+.ql-editor {
+  height: 200px !important;
+  overflow: auto;
+}
+
+.contents > label {
+  float: none !important;
+}

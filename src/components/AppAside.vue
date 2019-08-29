@@ -25,10 +25,12 @@
         <el-menu-item-group>
           <el-menu-item index="/publish">发布文章</el-menu-item>
           <el-menu-item index="/article">内容列表</el-menu-item>
-          <el-menu-item index="1-3">评论列表</el-menu-item>
-          <el-menu-item index="1-4">素材管理</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
+      <el-menu-item index="/comment">
+        <i class="el-icon-setting"></i>
+        <span slot="title">评论列表</span>
+      </el-menu-item>
       <el-submenu index="3">
         <template slot="title">
           <i class="el-icon-document"></i>

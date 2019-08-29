@@ -1,5 +1,9 @@
-<!-- 组件的模板 -->
 <template>
+  <!--
+    el-select 组件
+      value 属性，用来绑定同步的数据
+      change 事件，当选中项发生改变被触发，回调参数就是选项项的 value
+   -->
   <el-select :value="value"
              clearable
              @change="handleChange">
@@ -10,13 +14,19 @@
   </el-select>
 </template>
 
-<!-- 组件的 JavaScript -->
 <script>
 export default {
-  name: 'articleChannel',
+  name: 'ArticleChannel',
   props: {
     value: {
-      type: [String, Number],
+      type: [String,
+        Number,
+        Boolean,
+        Array,
+        Object,
+        Date,
+        Function,
+        Symbol],
       required: true
     }
   },
@@ -26,29 +36,29 @@ export default {
     }
   },
   created () {
+    // 加载频道列表
     this.loadChannels()
   },
   methods: {
-    async loadChannels () {
-      try {
-        const { data: { data } } = await this.axios({
-          method: 'GET',
-          url: '/channels'
-        })
-        console.log(data)
-        this.channels = data.channels
-      } catch (err) {
-        console.log(err)
-        this.$message.error('获取频道数据失败')
-      }
-    },
     handleChange (val) {
+      // console.log(val)
       this.$emit('input', val)
+    },
+
+    loadChannels () {
+      this.axios({
+        method: 'GET',
+        url: '/channels'
+      }).then(data => {
+        this.channels = data.channels
+      }).catch(err => {
+        console.log(err)
+        this.$message.error('加载频道列表失败')
+      })
     }
   }
 }
 </script>
 
-<!-- 组件的样式 -->
 <style lang="less" scoped>
 </style>

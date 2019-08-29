@@ -21,8 +21,7 @@
         </el-form-item>
         <el-form-item label="频道">
           <!-- 频道组件 -->
-          <ArticleChannel v-model="filterParams.channel_id">
-          </ArticleChannel>
+          <article-channel v-model="filterParams.channel_id"></article-channel>
         </el-form-item>
         <el-form-item label="时间">
           <el-date-picker value-format="yyyy-MM-dd"
@@ -101,7 +100,14 @@
             <el-button size="mini"
                        type="primary"
                        plain
-                       @click="$router.push(`/publish/${scope.row.id}`)">修改</el-button>
+                       @click="$router.push({
+                         name:'publish-edit',
+                         params:{
+                           id:scope.row.id
+                         }
+                       })">
+              <!-- @click="$router.push(`/publish/${scope.row.id}`)"  -->
+              修改</el-button>
             <el-button size="mini"
                        type="danger"
                        plain
@@ -117,9 +123,9 @@
         current-page 当前高亮的页码，需要和数据保持同步，否则可能会出现数据页码改变，视图页码没变的情况
       -->
       <el-pagination background
-                     :current-page="page"
+                     :current-page="filterParams.page"
                      layout="total, sizes, prev, pager, next, jumper"
-                     :page-size="pageSize"
+                     :page-size="filterParams.pageSize"
                      :total="totalCount"
                      :disabled="articleLoading"
                      @current-change="handleCurrentChange"
@@ -163,15 +169,15 @@ export default {
           label: '已删除'
         }
       ],
-      pageSize: 10, // 每页大小
       totalCount: 0, // 总数据量
-      page: 1, // 当前页码
       articleLoading: false, // 加载中
       filterParams: {
-        status: '', // 文章状态
-        channel_id: '', // 频道id
-        begin_pubdate: '', // 开始时间
-        end_pubdate: '' // 结束时间
+        pageSize: 10, // 每页大小
+        status: null, // 文章状态
+        page: 1, // 当前页码
+        channel_id: null, // 频道id
+        begin_pubdate: null, // 开始时间
+        end_pubdate: null // 结束时间
       },
       range_date: '' // 时间范围绑定值，这个字段的意义是为了绑定 date 组件触发 change 事件
       // channels: [] // 频道数据
@@ -189,18 +195,14 @@ export default {
       this.articleLoading = true
       // 除了登录相关接口之后，其它接口都必须在请求头中通过 Authorization 字段提供用户 token
       // 当我们登录成功，服务端会生成一个 token 令牌，放到用户信息中
-      const { data: { data } } = await this.axios({
+      const data = await this.axios({
         method: 'GET',
         url: '/articles',
-        params: {
-          page: this.page, // 页码
-          per_page: this.pageSize// 每页大小
-        }
+        params: this.filterParams
       })
-
+      console.log(data)
       this.articles = data.results
       this.totalCount = data.total_count
-
       // 请求结束，停止 loading
       this.articleLoading = false
     },
@@ -220,7 +222,6 @@ export default {
         //     message: '已取消删除'
         //   })
         // })
-
         // 确认：执行删除操作
         await this.axios({
           method: 'DELETE',

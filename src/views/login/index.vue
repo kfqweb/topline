@@ -110,7 +110,8 @@ export default {
         data: this.loginForm
       }).then(res => {
         this.subLoginLoading = false
-        const { message, data } = res.data
+        const { message, data } = JSON.parse(res.data)
+        console.log(res);
         if (message === 'OK') {
           // window.localStorage.setItem('token', JSON.stringify(data))
           setUser(data)
